@@ -24,6 +24,24 @@ describe('KanbanBoard', () => {
     vi.clearAllMocks()
   })
 
+  it('shows loading state while fetching characters', () => {
+    vi.mocked(fetchCharacters).mockReturnValue(new Promise(() => {}))
+    render(<KanbanBoard />)
+
+    expect(screen.getByText('Loading characters...')).toBeInTheDocument()
+    expect(screen.queryByText('Rick & Morty Kanban')).not.toBeInTheDocument()
+  })
+
+  it('shows error state when fetch fails', async () => {
+    vi.mocked(fetchCharacters).mockRejectedValue(new Error('Network error'))
+    render(<KanbanBoard />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Error: Network error')).toBeInTheDocument()
+    })
+    expect(screen.queryByText('To Do')).not.toBeInTheDocument()
+  })
+
   it('fetches characters on mount', async () => {
     vi.mocked(fetchCharacters).mockResolvedValue(MOCK_CHARACTERS)
     render(<KanbanBoard />)
@@ -33,24 +51,33 @@ describe('KanbanBoard', () => {
     })
   })
 
-  it('renders the board title', () => {
+  it('renders the board title', async () => {
     vi.mocked(fetchCharacters).mockResolvedValue(MOCK_CHARACTERS)
     render(<KanbanBoard />)
-    expect(screen.getByText('Rick & Morty Kanban')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.getByText('Rick & Morty Kanban')).toBeInTheDocument()
+    })
   })
 
-  it('renders all three column headings', () => {
+  it('renders all three column headings', async () => {
     vi.mocked(fetchCharacters).mockResolvedValue(MOCK_CHARACTERS)
     render(<KanbanBoard />)
-    expect(screen.getByText('To Do')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.getByText('To Do')).toBeInTheDocument()
+    })
     expect(screen.getByText('Doing')).toBeInTheDocument()
     expect(screen.getByText('Done')).toBeInTheDocument()
   })
 
-  it('renders the add task form', () => {
+  it('renders the add task form', async () => {
     vi.mocked(fetchCharacters).mockResolvedValue(MOCK_CHARACTERS)
     render(<KanbanBoard />)
-    expect(screen.getByPlaceholderText('Title')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Title')).toBeInTheDocument()
+    })
     expect(screen.getByRole('button', { name: /add task/i })).toBeInTheDocument()
   })
 

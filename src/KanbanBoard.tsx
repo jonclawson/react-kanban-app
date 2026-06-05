@@ -13,10 +13,16 @@ export default function KanbanBoard () {
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [selectedCharId, setSelectedCharId] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCharacters().then((data) => {
       setCharacters(data);
+      setLoading(false);
+    }).catch((err) => {
+      setError(err.message);
+      setLoading(false);
     });
   }, []);
 
@@ -69,6 +75,14 @@ export default function KanbanBoard () {
       confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
     }
   };
+
+  if (loading) {
+    return <div className="p-6 max-w-7xl mx-auto">Loading characters...</div>;
+  }
+
+  if (error) {
+    return <div className="p-6 max-w-7xl mx-auto text-red-500">Error: {error}</div>;
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
