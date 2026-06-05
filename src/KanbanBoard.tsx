@@ -1,30 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
 import confetti from 'canvas-confetti';
-import { fetchCharacters } from './api';
-import type { BoardState, KanbanItem, Character, ColumnId } from './types';
+import { useCharacters } from './useCharacters';
+import type { BoardState, KanbanItem, ColumnId } from './types';
 import ItemForm from './TaskForm';
 import Task from './Task';
 
 
 export default function KanbanBoard () {
-  const [characters, setCharacters] = useState<Character[]>([]);
+  const { characters, loading, error } = useCharacters();
   const [board, setBoard] = useState<BoardState>({ todo: [], doing: [], done: [] });  
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [selectedCharId, setSelectedCharId] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchCharacters().then((data) => {
-      setCharacters(data);
-      setLoading(false);
-    }).catch((err) => {
-      setError(err.message);
-      setLoading(false);
-    });
-  }, []);
 
   const handleAddItem = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
