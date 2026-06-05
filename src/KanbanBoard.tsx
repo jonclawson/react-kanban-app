@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd';
 import confetti from 'canvas-confetti';
 import { useCharacters } from './useCharacters';
@@ -14,7 +14,7 @@ export default function KanbanBoard () {
   const [desc, setDesc] = useState('');
   const [selectedCharId, setSelectedCharId] = useState('');
 
-  const handleAddItem = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleAddItem = useCallback((e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title.trim() || !selectedCharId) return;
 
@@ -30,7 +30,7 @@ export default function KanbanBoard () {
     setTitle('');
     setDesc('');
     setSelectedCharId('');
-  };
+  }, [title, selectedCharId, characters]);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
