@@ -6,6 +6,11 @@ import type { BoardState, KanbanItem, ColumnId } from './types';
 import ItemForm from './TaskForm';
 import Task from './Task';
 
+const COLUMN_LABELS: Record<ColumnId, string> = {
+  todo: 'To Do',
+  doing: 'Doing',
+  done: 'Done',
+};
 
 export default function KanbanBoard () {
   const { characters, loading, error } = useCharacters();
@@ -14,11 +19,19 @@ export default function KanbanBoard () {
   const [desc, setDesc] = useState('');
   const [selectedCharId, setSelectedCharId] = useState('');
 
-  const handleAddItem = useCallback((e: React.SubmitEvent<HTMLFormElement>) => {
+  const resetForm = useCallback(() => {
+    setTitle('');
+    setDesc('');
+    setSelectedCharId('');
+  }, []);
+
+  const handleAddItem = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title.trim() || !selectedCharId) return;
 
-    const character = characters.find(c => c.id === selectedCharId)!;
+    const character = characters.find(c => c.id === selectedCharId);
+    if (!character) return;
+
     const newItem: KanbanItem = {
       id: crypto.randomUUID(),
       title,
@@ -27,10 +40,8 @@ export default function KanbanBoard () {
     };
 
     setBoard(prev => ({ ...prev, todo: [...prev.todo, newItem] }));
-    setTitle('');
-    setDesc('');
-    setSelectedCharId('');
-  }, [title, selectedCharId, characters]);
+    resetForm();
+  };
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -95,8 +106,8 @@ export default function KanbanBoard () {
           {(['todo', 'doing', 'done'] as ColumnId[]).map((colId) => (
             <div key={colId} className="bg-slate-100 rounded-2xl p-4 flex flex-col min-h-[500px]">
 
-              <h2 className="text-lg font-bold capitalize mb-4 px-1 flex justify-between">
-                <span>{{'todo': 'To Do', 'doing': 'Doing', 'done': 'Done'}[colId]}</span>
+              <h2 className="text-lg font-bold capitalize mb-4 px-1">
+                {COLUMN_LABELS[colId]}
               </h2>
 
               <Droppable droppableId={colId}>
