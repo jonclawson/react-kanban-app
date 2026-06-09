@@ -25,7 +25,7 @@ export default function KanbanBoard () {
     setSelectedCharId('');
   }, []);
 
-  const handleAddItem = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddItem = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title.trim() || !selectedCharId) return;
 
