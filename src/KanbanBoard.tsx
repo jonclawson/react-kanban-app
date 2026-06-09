@@ -3,7 +3,7 @@ import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-p
 import confetti from 'canvas-confetti';
 import { useCharacters } from './useCharacters';
 import type { BoardState, KanbanItem, ColumnId } from './types';
-import ItemForm from './TaskForm';
+import TaskForm from './TaskForm';
 import Task from './Task';
 
 const COLUMN_LABELS: Record<ColumnId, string> = {
@@ -88,7 +88,7 @@ export default function KanbanBoard () {
 
       <h1 className="mb-8">Rick & Morty Kanban</h1>
 
-      <ItemForm 
+      <TaskForm 
         setSelectedCharId={setSelectedCharId}
         selectedCharId={selectedCharId}
         characters={characters}
