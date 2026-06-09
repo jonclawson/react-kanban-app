@@ -25,7 +25,7 @@ export default function TaskForm({ setSelectedCharId, selectedCharId, characters
         </div>
         <div>
           <label className="block  mb-1">Character</label>
-          <select value={selectedCharId} onChange={e => setSelectedCharId(e.target.value)} className="w-full p-2 border rounded-md bg-white">
+          <select value={selectedCharId} onChange={e => setSelectedCharId(e.target.value)} className="w-full p-2 border rounded-md bg-white" required>
             <option value="">Select a character</option>
             {characters.map(char => (
               <option key={char.id} value={char.id}>{char.name}</option>
