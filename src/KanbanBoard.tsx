@@ -13,7 +13,8 @@ const COLUMN_LABELS: Record<ColumnId, string> = {
 };
 
 export default function KanbanBoard () {
-  const { characters, loading, error } = useCharacters();
+  const [searchQuery, setSearchQuery] = useState('');
+  const { characters, loading, error } = useCharacters(searchQuery || undefined);
   const [board, setBoard] = useState<BoardState>({ todo: [], doing: [], done: [] });  
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
@@ -75,11 +76,11 @@ export default function KanbanBoard () {
     }
   };
 
-  if (loading) {
+  if (loading && characters.length === 0) {
     return <div className="p-6 max-w-7xl mx-auto">Loading characters...</div>;
   }
 
-  if (error) {
+  if (error && characters.length === 0) {
     return <div className="p-6 max-w-7xl mx-auto text-red-500">Error: {error}</div>;
   }
 
@@ -92,6 +93,7 @@ export default function KanbanBoard () {
         setSelectedCharId={setSelectedCharId}
         selectedCharId={selectedCharId}
         characters={characters}
+        onCharType={setSearchQuery}
         handleAddItem={handleAddItem}
         title={title}
         setTitle={setTitle}

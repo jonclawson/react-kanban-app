@@ -24,7 +24,7 @@ describe('fetchCharacters', () => {
     expect(mockFetch).toHaveBeenCalledWith('https://rickandmortyapi.com/graphql', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: expect.stringContaining('query GetCharacters'),
+      body: expect.stringContaining('characters(filter:{name: $name})'),
     })
   })
 

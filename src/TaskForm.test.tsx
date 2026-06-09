@@ -14,12 +14,14 @@ function renderForm() {
   const handleAddItem = vi.fn()
   const setTitle = vi.fn()
   const setDesc = vi.fn()
+  const onCharType = vi.fn()
 
   const utils = render(
     <TaskForm
       setSelectedCharId={setSelectedCharId}
       selectedCharId=""
       characters={mockCharacters}
+      onCharType={onCharType}
       handleAddItem={handleAddItem}
       title=""
       setTitle={setTitle}
@@ -28,7 +30,7 @@ function renderForm() {
     />
   )
 
-  return { setSelectedCharId, handleAddItem, setTitle, setDesc, ...utils }
+  return { setSelectedCharId, handleAddItem, setTitle, setDesc, onCharType, ...utils }
 }
 
 describe('TaskForm', () => {
@@ -42,14 +44,11 @@ describe('TaskForm', () => {
     expect(screen.getByPlaceholderText('Description')).toBeInTheDocument()
   })
 
-  it('renders a character select dropdown with all characters', () => {
+  it('renders a character autocomplete input', () => {
     renderForm()
-    const select = screen.getByRole('combobox')
-    expect(select).toBeInTheDocument()
-
-    expect(screen.getByText('Select a character')).toBeInTheDocument()
-    expect(screen.getByText('Rick Sanchez')).toBeInTheDocument()
-    expect(screen.getByText('Morty Smith')).toBeInTheDocument()
+    const input = screen.getByRole('combobox')
+    expect(input).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Search characters...')).toBeInTheDocument()
   })
 
   it('renders a submit button', () => {
@@ -71,10 +70,14 @@ describe('TaskForm', () => {
     expect(setDesc).toHaveBeenCalled()
   })
 
-  it('calls setSelectedCharId when selecting a character', async () => {
+  it('calls setSelectedCharId when selecting a character from the dropdown', async () => {
     const { setSelectedCharId } = renderForm()
-    const select = screen.getByRole('combobox')
-    await userEvent.selectOptions(select, '1')
+    const input = screen.getByRole('combobox')
+
+    await userEvent.type(input, 'Rick')
+    const option = screen.getByText('Rick Sanchez')
+    await userEvent.click(option)
+
     expect(setSelectedCharId).toHaveBeenCalledWith('1')
   })
 
@@ -86,6 +89,7 @@ describe('TaskForm', () => {
         setSelectedCharId={vi.fn()}
         selectedCharId="1"
         characters={mockCharacters}
+        onCharType={vi.fn()}
         handleAddItem={handleAddItem}
         title="Test"
         setTitle={vi.fn()}
